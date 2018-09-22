@@ -1,0 +1,7 @@
+{
+  "sources": {
+    "BBC News": "bbc-news"
+  },
+  "api-key": "your-api-key-here",
+  "stories-per-source": 3
+}
