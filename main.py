@@ -1,48 +1,56 @@
+import sys
 import json
-import requests
+import news as nw
+
+def commandHandler():
+	command = input(">>>")
+	if(command != None and len(command) > 0):
+		commandArray = command.split(" ")
+		if(commandArray[0] == "preview"):
+			if(len(commandArray) >= 3):
+				try:
+					story_number = int(commandArray[len(commandArray) - 1]) - 1
+					sourceName = " ".join(commandArray[1:len(commandArray)-1])
+					news.previewStory(sourceName, story_number)
+				except ValueError:
+					print("Error: invalid article number.")
+			else:
+				print("Too few arguments. Please use the format: " +
+				      "expand source_name story_number")
+		elif(commandArray[0] == "browser"):
+			print("browser branch called")
+		elif(commandArray[0] == "add"):
+			print("add branch called")
+		elif(commandArray[0] == "nos"):
+			print("nos branch called")
+		elif(commandArray[0] == "random"):
+			print("random headline branch called")
+		elif(commandArray[0] == "refresh"):
+			print("refreshing stories")
+		elif(commandArray[0] == "help"):
+			print("help branch called")
+		elif(commandArray[0] == "exit"):
+			sys.exit()
+		else:
+			print("Unknown command")
+			commandHandler()
+	else:
+		print("Unknown command")
+	commandHandler()
+		
+	#expand story: expand source storyNumber
+	#open story in browser: browser source storyNumber -w -t
+	#add source: add source sourceName
+	#number of stories: nos someInt
+	#random headline: random
 
 with open("prefs.json", "r") as read_file:
 	prefs = json.load(read_file)
-base_url = "https://newsapi.org/v2/"
-top_headlines = base_url + "top-headlines"
 print("Welcome to the news! Thanks to newsapi.org for their lovely API!")
-print(top_headlines)
+print("Loading news...")	
+news = nw.News(prefs)
+commandHandler()
 
-def getMainStories(sources, stories_per_source, api_key):
-	print("It's working!")
-	for source in sources:
-		sourceID = sources[source]
-		print(sourceID)
-		params = {
-			'sources': sourceID,
-			'apiKey': api_key
-		}
-		response = requests.get(top_headlines, params=params)
-		try:
-			response = response.json()
-			if(response["status"] == "ok"):
-				for x in range(0, stories_per_source):
-					print(response["articles"][x])
-			else:
-				print(formatRequestError(response))
-		except:
-			print("*******************" +
-			      "Error converting response to JSON. Raw response text:" +
-			      "******************")
-			print(response.text)
-			
-def formatRequestError(response):
-	message = "************Request Error***********\n"
-	message += "Status: " + response["status"] + "\n"
-	message += "Status code: " + response["code"] + "\n"
-	message += "Message: " + response["message"]
-	return message
-
-#TODO
-def formatArticle(article):
-	pass
-
-getMainStories(prefs["sources"], prefs["stories-per-source"], prefs["api-key"])
 #problem:
 #get x number of top stories for an unkown number of sources
 #process
