@@ -1,6 +1,8 @@
 import sys
 import json
+import webbrowser
 import news as nw
+import prefManager as pm
 
 def commandHandler():
 	command = input(">>>")
@@ -16,11 +18,25 @@ def commandHandler():
 					print("Error: invalid article number.")
 			else:
 				print("Too few arguments. Please use the format: " +
-				      "expand source_name story_number")
-		elif(commandArray[0] == "browser"):
-			print("browser branch called")
+				      "preview source_name story_number")
+		elif(commandArray[0] == "open"):
+			if(len(commandArray) >= 3):
+				try:
+					story_number = int(commandArray[len(commandArray) - 1]) - 1
+					sourceName = " ".join(commandArray[1:len(commandArray)-1])
+					webbrowser.open(news.getStoryURL(sourceName, story_number))
+				except ValueError:
+					print("Error: invalid article number.")
+			else:
+				print("Too few arguments. Please use the format: " +
+				      "open source_name story_number")
 		elif(commandArray[0] == "add"):
 			print("add branch called")
+			if(len(commandArray) > 1):
+				prefManager.addSource(" ".join(commandArray[1:]))
+			
+			#add get prefManager to deal with prefs, pull out of main.
+			#refactor request making code into own utility class.
 		elif(commandArray[0] == "nos"):
 			print("nos branch called")
 		elif(commandArray[0] == "random"):
@@ -43,7 +59,7 @@ def commandHandler():
 	#add source: add source sourceName
 	#number of stories: nos someInt
 	#random headline: random
-
+prefManager = pm.PrefManager()
 with open("prefs.json", "r") as read_file:
 	prefs = json.load(read_file)
 print("Welcome to the news! Thanks to newsapi.org for their lovely API!")

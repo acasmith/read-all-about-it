@@ -17,15 +17,13 @@ class News:
                     'sources': sourceID,
                     'apiKey': prefs['api-key']
             }
-            response = requests.get(self.top_headlines, params=params)
             try:
+                response = requests.get(self.top_headlines, params=params)
                 self.stories[source] = response.json()
-            except Exception as e:
-                print("*******************" +
-                      "Error converting response to JSON" +
-                      "******************")
+            except requests.exceptions.RequestException as e:
                 print(e)
-                print("Raw response: \n" + response.text)
+            except ValueError as e:
+                print(e)
     
     def showNews(self, sources, stories_per_source):
         for source in sources:
@@ -69,6 +67,9 @@ class News:
                             "source please use the add command to add the source " +
                             "to your news feed.")
         print(storyPreview)
+        
+    def getStoryURL(self, source, story_number):
+        return self.stories[source]['articles'][story_number]['url']
     
     #expand story
     #browser story
