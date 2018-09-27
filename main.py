@@ -37,12 +37,14 @@ def commandHandler():
 			
 			#add get prefManager to deal with prefs, pull out of main.
 			#refactor request making code into own utility class.
+			#refactor menu offering code into utility class.
 		elif(commandArray[0] == "nos"):
 			print("nos branch called")
 		elif(commandArray[0] == "random"):
 			print("random headline branch called")
 		elif(commandArray[0] == "refresh"):
 			print("refreshing stories")
+			#have option to just repost stories without calling API again.
 		elif(commandArray[0] == "help"):
 			print("help branch called")
 		elif(commandArray[0] == "exit"):
