@@ -31,13 +31,16 @@ def commandHandler():
 				print("Too few arguments. Please use the format: " +
 				      "open source_name story_number")
 		elif(commandArray[0] == "add"):
-			print("add branch called")
 			if(len(commandArray) > 1):
 				prefManager.addSource(" ".join(commandArray[1:]))
-			
+			else:
+				print("Too few arguments. Please use the format: " +
+				      "add source")
 			#add get prefManager to deal with prefs, pull out of main.
 			#refactor request making code into own utility class.
 			#refactor menu offering code into utility class.
+		elif(commandArray[0] == "remove"):
+			print("remove branch called")
 		elif(commandArray[0] == "nos"):
 			print("nos branch called")
 		elif(commandArray[0] == "random"):
