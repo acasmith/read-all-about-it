@@ -13,7 +13,7 @@ class PrefManager():
         except FileNotFoundError:
             print("No preferences file found. Would you like to generate a new one? (y/n)")
             self.generate_prefs()
-        except JSONDecodeError:
+        except json.decoder.JSONDecodeError:
             print("prefs.json could not be parsed as json. Generate a new preferences file? (y/n:)")
             self.generate_prefs()
             
@@ -21,27 +21,15 @@ class PrefManager():
     
     def addSource(self, source_name):
         source_list = self.get_top_sources()
-        matches = []
-        for source in source_list['sources']:
-            if source_name in (source['name']):
-                matches.append(source)
-        if len(matches) > 0:
-            match = matches[0]
-            if len(matches) > 1:
-                print("Multiple options found for \"" + source_name + "\":")
-                match = self.choose_source(matches)
-            if(match != -1 and self.confirm_source_addition(match)):
-                self.prefs['sources'][match['name']] = match['id']
-                try:
-                    with open("prefs.json", "w") as write_file:
-                        json.dump(self.prefs, write_file)
-                    print("Source added to preferences")
-                except Exception as e:
-                    print("Could not save new source. Please check prefs.json exists and matches the format of expamle-prefs.json.")
+        match = self.find_source(source_list, source_name)
+        if match != -1 and match != -2:
+            confirm_statement = "Add " + match['name'] + " to followed sources?"
+            if self.confirm_source_change(confirm_statement):
+                self.prefs['sources'].append({'name': match['name'], 'id': match['id'], 'description': match['description']})
+                if(self.save_changes()):
+                    print("Now following " + match['name'] + ".")
             else:
-                print("Cancelled. No source added.")
-        else:
-            print("No matching source found for \"" + source_name + "\"")
+                print("Cancelled. Preferences not changed.")
             
             #0 matches = offer manual addition
             #1 match = confirm
@@ -52,27 +40,43 @@ class PrefManager():
         #if found, add to prefs
         #else offer to take to page to get source and add it manually.
         
-    '''def remove_source(self, source_name):
-        matches = []
-        for source in source_list['sources']:
-            if source_name in (source['name']):
-                matches.append(source)
-        if len(matches) > 0:
-            match = matches[0]
-            if len(matches) > 1:
-                match = self.choose_source(matches)'''
+    def remove_source(self, source_name):
+        match = self.find_source(self.prefs, source_name)
+        if match != -1 and match != -2:
+            confirm_statement = "Remove " + match['name'] + " from followed sources?"
+            if self.confirm_source_change(confirm_statement):
+                for i in range(0, len(self.prefs['sources'])):
+                    if self.prefs['sources'][i] == match:
+                        del self.prefs['sources'][i]
+                        if(self.save_changes()):
+                            print("No longer following " + match['name'] + ".")
+                        
+                        
+    def save_changes(self):
+        try:
+            with open("prefs.json", "w") as write_file:
+                json.dump(self.prefs, write_file)
+            return True
+        except Exception as e:
+            print("Could not save preferences changes. Please check prefs.json exists and matches the format of expamle-prefs.json.")
+            return False
                 
-    def edit_sources(self, source_list):
+    def find_source(self, source_list, source_name):
         matches = []
         for source in source_list['sources']:
-            if source_name in (source['name']):
+            if source_name in source['name']:
                 matches.append(source)
         if len(matches) > 0:
             match = matches[0]
             if len(matches) > 1:
                 match = self.choose_source(matches)
-            return match
-        return -2
+        else:
+            match = -2
+        if match == -1:
+            print("Cancelled. Preferences not changed.")
+        if match == -2:
+            print("No matching source found for \"" + source_name + "\"")
+        return match
                 
         
         
@@ -120,8 +124,8 @@ class PrefManager():
         return formattedSource
         
     
-    def confirm_source_addition(self, match):
-        print("Add " + match['name'] + " to followed sources? (y/n):")
+    def confirm_source_change(self, confirm_statement):
+        print(confirm_statement + " (y/n):")
         response = input(">>>")
         if(response == "y" or response == "yes" or response == "YES"):
             return True

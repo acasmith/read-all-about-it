@@ -12,14 +12,14 @@ class News:
     def getStories(self, prefs):
         sources = prefs['sources']
         for source in sources:
-            sourceID = sources[source]
+            sourceID = source['id']
             params = {
                     'sources': sourceID,
                     'apiKey': prefs['api-key']
             }
             try:
                 response = requests.get(self.top_headlines, params=params)
-                self.stories[source] = response.json()
+                self.stories[source['name']] = response.json()
             except requests.exceptions.RequestException as e:
                 print(e)
             except ValueError as e:
@@ -27,24 +27,24 @@ class News:
     
     def showNews(self, sources, stories_per_source):
         for source in sources:
-            if(self.stories[source]["status"] == "ok"):
-                print(self.sourceSummary(source, stories_per_source))
+            if(self.stories[source['name']]["status"] == "ok"):
+                print(self.sourceSummary(source['name'], stories_per_source))
             else:
                 print(self.formatRequestError(source))
             
 
-    def sourceSummary(self, source, stories_per_source):
-        summaryString = source + " Headlines: \n"
+    def sourceSummary(self, source_name, stories_per_source):
+        summaryString = source_name + " Headlines: \n"
         for x in range(0, stories_per_source):
-                summaryString += self.formatArticle(self.stories[source]["articles"][x], x + 1) + "\n"
+                summaryString += self.formatArticle(self.stories[source_name]["articles"][x], x + 1) + "\n"
         return summaryString
     
-    def formatRequestError(self, source):
+    def formatRequestError(self, source_name):
         message = "************Request Error***********\n"
-        message += "News source: " + source + "\n"
-        message += "Request status: " + self.stories[source]["status"] + "\n"
-        message += "Request status code: " + self.stories[source]["code"] + "\n"
-        message += "Message: " + self.stories[source]["message"]
+        message += "News source: " + source_name + "\n"
+        message += "Request status: " + self.stories[source_name]["status"] + "\n"
+        message += "Request status code: " + self.stories[source_name]["code"] + "\n"
+        message += "Message: " + self.stories[source_name]["message"]
         return message
     
     def formatArticle(self, article, articleNumber):
@@ -52,11 +52,11 @@ class News:
         formattedString += article['title']
         return formattedString
     
-    def previewStory(self, source, story_number):
+    def previewStory(self, source_name, story_number):
         storyPreview = ""
-        if source in self.stories.keys():
-            if(story_number >= 0 and story_number < len(self.stories[source])):
-                article = self.stories[source]['articles'][story_number]
+        if source_name in self.stories.keys():
+            if(story_number >= 0 and story_number < len(self.stories[source_name])):
+                article = self.stories[source_name]['articles'][story_number]
                 storyPreview = article['title'] + "\n"
                 storyPreview += article['description'] + "\n"
                 storyPreview += article['content']

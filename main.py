@@ -4,6 +4,8 @@ import webbrowser
 import news as nw
 import prefManager as pm
 
+#In hindsight, should've made a class for prefs so rest of program could easier manage
+#any underlying changes 
 def commandHandler():
 	command = input(">>>")
 	if(command != None and len(command) > 0):
@@ -41,6 +43,11 @@ def commandHandler():
 			#refactor menu offering code into utility class.
 		elif(commandArray[0] == "remove"):
 			print("remove branch called")
+			if(len(commandArray) > 1):
+				prefManager.remove_source(" ".join(commandArray[1:]))
+			else:
+				print("Too few arguments. Please use the format: " +
+				      "remove source")
 		elif(commandArray[0] == "nos"):
 			print("nos branch called")
 		elif(commandArray[0] == "random"):
