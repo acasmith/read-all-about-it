@@ -1,2 +1,2 @@
 # read-all-about-it
-Simple, configurable news aggregator.
+Simple, configurable command line news aggregator.

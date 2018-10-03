@@ -1,7 +1,1 @@
-{
-  "sources": {
-    "BBC News": "bbc-news"
-  },
-  "api-key": "your-api-key-here",
-  "stories-per-source": 3
-}
+{"sources": [{"name": "BBC News", "id": "bbc-news", "description": "Use BBC News for up-to-the-minute news, breaking news, video, audio and feature stories. BBC News provides trusted World and UK news as well as local and regional perspectives. Also entertainment, business, science, technology and health news."}, {"name": "CNN", "id": "cnn", "description": "View the latest news and breaking news today for U.S., world, weather, entertainment, politics and health at CNN"}], "api-key": "your-api-key-here", "stories-per-source": 3}

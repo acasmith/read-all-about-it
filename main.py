@@ -40,7 +40,6 @@ def commandHandler():
 				      "add source")
 			#add get prefManager to deal with prefs, pull out of main.
 			#refactor request making code into own utility class.
-			#refactor menu offering code into utility class.
 		elif(commandArray[0] == "remove"):
 			print("remove branch called")
 			if(len(commandArray) > 1):
