@@ -1,6 +1,7 @@
 import requests
 import json
 from menu import Menu
+from prefs import Preferences
 
 class PrefManager():
     base_url = "https://newsapi.org/v2/"
@@ -10,7 +11,10 @@ class PrefManager():
     def __init__(self):
         try:
             with open("prefs.json", "r") as read_file:
-                self.prefs = json.load(read_file)
+                self.prefs = Preferences(json.load(read_file))
+            if self.prefs is None:
+                print("No preferences have been specified. Set preferences now?")
+                self.generate_prefs()
         except FileNotFoundError:
             print("No preferences file found. Would you like to generate a new one? (y/n)")
             self.generate_prefs()
@@ -19,14 +23,26 @@ class PrefManager():
             self.generate_prefs()
             
             #generate new prefs file. Put y/n in generate function to cap input.
+            
+    def get_prefs(self):
+        return self.prefs
+    
+    def get_sources(self):
+        return self.prefs.get_sources()
+    
+    def get_api_key(self):
+        return self.prefs.get_api_key()
+    
+    def get_stories_per_source(self):
+        return self.prefs.get_stories_per_source()
     
     def addSource(self, source_name):
         source_list = self.get_top_sources()
-        match = self.find_source(source_list, source_name)
+        match = self.find_source(source_list['sources'], source_name)
         if match != -1 and match != -2:
             confirm_statement = "Add " + match['name'] + " to followed sources?"
             if Menu.confirm_change(confirm_statement):
-                self.prefs['sources'].append({'name': match['name'], 'id': match['id'], 'description': match['description']})
+                self.prefs.add_source({'name': match['name'], 'id': match['id'], 'description': match['description']})
                 if(self.save_changes()):
                     print("Now following " + match['name'] + ".")
             else:
@@ -42,31 +58,36 @@ class PrefManager():
         #else offer to take to page to get source and add it manually.
         
     def remove_source(self, source_name):
-        match = self.find_source(self.prefs, source_name)
+        match = self.find_source(self.prefs.get_sources(), source_name)
         if match != -1 and match != -2:
             confirm_statement = "Remove " + match['name'] + " from followed sources?"
-            if Menu.confirm_change(confirm_statement):
-                for i in range(0, len(self.prefs['sources'])):
+            if(Menu.confirm_change(confirm_statement) and
+                                   self.prefs.remove_source(match) and
+                                   self.save_changes()):
+                print("No longer following " + match['name'] + ".")
+                '''for i in range(0, len(self.prefs['sources'])):
                     if self.prefs['sources'][i] == match:
                         del self.prefs['sources'][i]
+                self.prefs.remove_source(match)
                         if(self.save_changes()):
-                            print("No longer following " + match['name'] + ".")
+                            print("No longer following " + match['name'] + ".")'''
             else:
                 print("Cancelled. Preferences not changed.")
                         
     def save_changes(self):
         try:
             with open("prefs.json", "w") as write_file:
-                json.dump(self.prefs, write_file)
+                json.dump(self.prefs.get_prefs(), write_file)
             return True
         except Exception as e:  #Find more specific exception(s) to target
             print("Could not save preferences changes. Please check prefs.json exists and matches the format of expamle-prefs.json.")
+            print(e)
             return False
                 
     def find_source(self, source_list, source_name):
         matches = []
-        for source in source_list['sources']:
-            if source_name in source['name']:
+        for source in source_list:
+            if(source_name in source['name']):
                 matches.append(source)
         if len(matches) > 0:
             match = matches[0]
@@ -83,7 +104,7 @@ class PrefManager():
         
     def get_top_sources(self):
         params = {
-            'apiKey': self.prefs['api-key']
+            'apiKey': self.prefs.get_api_key()
         }
         try:
             print("Searching for sources...")

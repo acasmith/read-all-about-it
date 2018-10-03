@@ -3,19 +3,20 @@ class News:
     stories = {}
     base_url = "https://newsapi.org/v2/"
     top_headlines = base_url + "top-headlines"
+    pref_manager = None
     
-    #Would prefer a callback from getStories, but keeping it simple for now.
-    def __init__(self, prefs):
-        self.getStories(prefs)
-        self.showNews(prefs['sources'], prefs['stories-per-source'])
+    def __init__(self, pref_manager):
+        self.pref_manager = pref_manager
+        self.getStories()
+        self.showNews()
         
-    def getStories(self, prefs):
-        sources = prefs['sources']
+    def getStories(self):
+        sources = self.pref_manager.get_sources()
         for source in sources:
             sourceID = source['id']
             params = {
                     'sources': sourceID,
-                    'apiKey': prefs['api-key']
+                    'apiKey': self.pref_manager.get_api_key()
             }
             try:
                 response = requests.get(self.top_headlines, params=params)
@@ -25,10 +26,11 @@ class News:
             except ValueError as e:
                 print(e)
     
-    def showNews(self, sources, stories_per_source):
+    def showNews(self):
+        sources = self.pref_manager.get_sources()
         for source in sources:
             if(self.stories[source['name']]["status"] == "ok"):
-                print(self.sourceSummary(source['name'], stories_per_source))
+                print(self.sourceSummary(source['name'], self.pref_manager.get_stories_per_source()))
             else:
                 print(self.formatRequestError(source))
             

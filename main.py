@@ -4,8 +4,6 @@ import webbrowser
 import news as nw
 import prefManager as pm
 
-#In hindsight, should've made a class for prefs so rest of program could easier manage
-#any underlying changes 
 def commandHandler():
 	command = input(">>>")
 	if(command != None and len(command) > 0):
@@ -38,10 +36,8 @@ def commandHandler():
 			else:
 				print("Too few arguments. Please use the format: " +
 				      "add source")
-			#add get prefManager to deal with prefs, pull out of main.
 			#refactor request making code into own utility class.
 		elif(commandArray[0] == "remove"):
-			print("remove branch called")
 			if(len(commandArray) > 1):
 				prefManager.remove_source(" ".join(commandArray[1:]))
 			else:
@@ -71,22 +67,7 @@ def commandHandler():
 	#number of stories: nos someInt
 	#random headline: random
 prefManager = pm.PrefManager()
-with open("prefs.json", "r") as read_file:
-	prefs = json.load(read_file)
 print("Welcome to the news! Thanks to newsapi.org for their lovely API!")
 print("Loading news...")	
-news = nw.News(prefs)
+news = nw.News(prefManager)
 commandHandler()
-
-#problem:
-#get x number of top stories for an unkown number of sources
-#process
-#for each source
-###get id and num stories
-###use it to make request
-###check request response: if good, return formatted response else return error string for this source
-#print collection of news stories
- 
-#get BBC news stories and print to cmd.
-#have option to specify news outlet as arg.
-#have option to open news stories in browser
