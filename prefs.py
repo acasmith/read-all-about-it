@@ -1,9 +1,7 @@
 class Preferences:
     def __init__(self, prefs):
         self.prefs = prefs
-        '''self.sources = prefs['sources']
-        self.api_key = prefs['api-key']
-        self.stories_per_source = prefs['stories-per-source']'''
+
     def get_prefs(self):
         return self.prefs
         

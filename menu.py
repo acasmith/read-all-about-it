@@ -1,7 +1,7 @@
 #Utility functions for generating and interacting with numeric command line menus.
 
 class Menu:
-    #NOT CURRENTLY USED
+    #NOT CURRENTLY USED: legacy from alternate implementation
     @staticmethod
     #offer each option as a numbered menu       
     def numeric_menu(self, menu_items):
@@ -9,8 +9,7 @@ class Menu:
             print(str(x + 1) + ") " + menu_items[x])
         print("Please enter the number you wish to choose, or enter exit to cancel:")
         return self.parse_menu_input(menu_items);
-    
-    #NOT CURRENTLY USED
+
     @staticmethod
     #offer each option as a numbered menu and format the output      
     def numeric_menuf(self, menu_items, formatter):
@@ -46,4 +45,4 @@ class Menu:
         elif(response == "n" or response == "no" or response == "NO"):
             return False
         print("Invalid input.")
-        return Menu.confirm_source_addition(match)
+        return Menu.confirm_change(confirm_statement)

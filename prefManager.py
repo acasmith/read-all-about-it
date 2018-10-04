@@ -1,9 +1,10 @@
+import sys
 import requests
 import json
 from menu import Menu
 from prefs import Preferences
 
-class PrefManager():
+class PrefManager:
     base_url = "https://newsapi.org/v2/"
     top_sources = base_url + "sources"
     prefs = None
@@ -12,17 +13,21 @@ class PrefManager():
         try:
             with open("prefs.json", "r") as read_file:
                 self.prefs = Preferences(json.load(read_file))
-            if self.prefs is None:
-                print("No preferences have been specified. Set preferences now?")
-                self.generate_prefs()
         except FileNotFoundError:
-            print("No preferences file found. Would you like to generate a new one? (y/n)")
-            self.generate_prefs()
+            self.exit_handler("No preferences file found. " +
+                    "Please create a new file names prefs.json in your " +
+                    "read-all-about-it directory and copy over the example " +
+                    "found in example-prefs.json, replacing the example api" +
+                    "key with your own.")
         except json.decoder.JSONDecodeError:
-            print("prefs.json could not be parsed as json. Generate a new preferences file? (y/n:)")
-            self.generate_prefs()
-            
-            #generate new prefs file. Put y/n in generate function to cap input.
+            PrefManager.exit_handler("The file prefs.json could not be parsed " +
+                    "as json. Please copy the example found in example-prefs.json and " +
+                    "paste it into prefs.json, replacing the example api key " +
+                    "with your own.")
+    
+    def exit_handler(message):
+        print(message)
+        sys.exit()
             
     def get_prefs(self):
         return self.prefs
@@ -48,10 +53,6 @@ class PrefManager():
             else:
                 print("Cancelled. Preferences not changed.")
             
-            #0 matches = offer manual addition
-            #1 match = confirm
-            #>1 matches = offer selection then confirm.
-            
         #pull down sources
         #filter sources for name
         #if found, add to prefs
@@ -65,12 +66,6 @@ class PrefManager():
                                    self.prefs.remove_source(match) and
                                    self.save_changes()):
                 print("No longer following " + match['name'] + ".")
-                '''for i in range(0, len(self.prefs['sources'])):
-                    if self.prefs['sources'][i] == match:
-                        del self.prefs['sources'][i]
-                self.prefs.remove_source(match)
-                        if(self.save_changes()):
-                            print("No longer following " + match['name'] + ".")'''
             else:
                 print("Cancelled. Preferences not changed.")
                         
@@ -120,7 +115,3 @@ class PrefManager():
         formattedSource = source['name'] + ": "
         formattedSource += source['description'] + "\n"
         return formattedSource
-        
-    
-    def generate_prefs(self):
-        pass

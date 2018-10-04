@@ -72,7 +72,5 @@ class News:
         
     def getStoryURL(self, source, story_number):
         return self.stories[source]['articles'][story_number]['url']
-    
-    #expand story
-    #browser story
+
     #random story

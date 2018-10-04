@@ -2,7 +2,7 @@ import sys
 import json
 import webbrowser
 import news as nw
-import prefManager as pm
+from prefManager import PrefManager
 
 def commandHandler():
 	command = input(">>>")
@@ -60,13 +60,8 @@ def commandHandler():
 	else:
 		print("Unknown command")
 	commandHandler()
-		
-	#expand story: expand source storyNumber
-	#open story in browser: browser source storyNumber -w -t
-	#add source: add source sourceName
-	#number of stories: nos someInt
-	#random headline: random
-prefManager = pm.PrefManager()
+
+prefManager = PrefManager()
 print("Welcome to the news! Thanks to newsapi.org for their lovely API!")
 print("Loading news...")	
 news = nw.News(prefManager)
