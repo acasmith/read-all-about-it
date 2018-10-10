@@ -1,7 +1,7 @@
 import sys
 import json
 import webbrowser
-import news as nw
+from news import News
 from prefManager import PrefManager
 
 def commandHandler():
@@ -43,12 +43,19 @@ def commandHandler():
 			else:
 				print("Too few arguments. Please use the format: " +
 				      "remove source")
-		elif(commandArray[0] == "nos"):
-			print("nos branch called")
+		elif(commandArray[0] == "sps"):
+			if(len(commandArray) > 1 and len(commandArray) < 3):
+				try:
+					prefManager.set_stories_per_source(int(commandArray[1]))
+				except ValueError:
+					print("Error: Invalid number of stories. Please enter an integer greater than 0.")
+			else:
+				print("Invalid command. Please use the format sps storyNumber")
 		elif(commandArray[0] == "random"):
 			print("random headline branch called")
 		elif(commandArray[0] == "refresh"):
-			print("refreshing stories")
+			print("Refreshing headlines...")
+			news.refresh(commandArray)
 			#have option to just repost stories without calling API again.
 		elif(commandArray[0] == "help"):
 			print("help branch called")
@@ -64,5 +71,5 @@ def commandHandler():
 prefManager = PrefManager()
 print("Welcome to the news! Thanks to newsapi.org for their lovely API!")
 print("Loading news...")	
-news = nw.News(prefManager)
+news = News(prefManager)
 commandHandler()

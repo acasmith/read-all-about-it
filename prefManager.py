@@ -1,4 +1,4 @@
-import sys
+import sys  #I don't like having an exit here as well as in main. Find a way around the circular imports issue.
 import requests
 import json
 from menu import Menu
@@ -115,3 +115,12 @@ class PrefManager:
         formattedSource = source['name'] + ": "
         formattedSource += source['description'] + "\n"
         return formattedSource
+    
+    def set_stories_per_source(self, nos):
+        if(not(nos is None) and
+           (type(nos) is int) and
+           (nos > 0)):
+            self.prefs.set_stories_per_source(nos);
+            self.save_changes();
+        else:
+            print("Invalid parameter. Please enter an integer greater than 0.")

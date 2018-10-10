@@ -25,4 +25,9 @@ class Preferences:
                         return True
         return False
     
+    def set_stories_per_source(self, nos):
+        self.prefs['stories-per-source'] = nos
+        print(self.get_prefs()['stories-per-source'])
+            
+    
     

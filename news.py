@@ -72,5 +72,10 @@ class News:
         
     def getStoryURL(self, source, story_number):
         return self.stories[source]['articles'][story_number]['url']
-
+    
+    def refresh(self, commandArray):
+        if(len(commandArray) == 1 or
+           commandArray[1] != '-local'):
+            self.getStories()
+        self.showNews()
     #random story
