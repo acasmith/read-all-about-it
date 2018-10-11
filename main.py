@@ -36,7 +36,6 @@ def commandHandler():
 			else:
 				print("Too few arguments. Please use the format: " +
 				      "add source")
-			#refactor request making code into own utility class.
 		elif(commandArray[0] == "remove"):
 			if(len(commandArray) > 1):
 				prefManager.remove_source(" ".join(commandArray[1:]))
@@ -53,10 +52,11 @@ def commandHandler():
 				print("Invalid command. Please use the format sps storyNumber")
 		elif(commandArray[0] == "random"):
 			print("random headline branch called")
+			#TODO!
 		elif(commandArray[0] == "refresh"):
 			print("Refreshing headlines...")
 			news.refresh(commandArray)
-			#have option to just repost stories without calling API again.
+			#Can repost stories without calling API again by passing -local switch.
 		elif(commandArray[0] == "help"):
 			print("help branch called")
 		elif(commandArray[0] == "exit"):

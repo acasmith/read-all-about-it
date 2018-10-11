@@ -1,30 +1,19 @@
-import requests
+from raab_requests import Raab_Requests
 class News:
-    stories = {}
-    base_url = "https://newsapi.org/v2/"
-    top_headlines = base_url + "top-headlines"
-    pref_manager = None
     
     def __init__(self, pref_manager):
+        self.stories = {}
         self.pref_manager = pref_manager
         self.getStories()
         self.showNews()
-        
+                
     def getStories(self):
         sources = self.pref_manager.get_sources()
+        params = {'apiKey': self.pref_manager.get_api_key()}
         for source in sources:
-            sourceID = source['id']
-            params = {
-                    'sources': sourceID,
-                    'apiKey': self.pref_manager.get_api_key()
-            }
-            try:
-                response = requests.get(self.top_headlines, params=params)
-                self.stories[source['name']] = response.json()
-            except requests.exceptions.RequestException as e:
-                print(e)
-            except ValueError as e:
-                print(e)
+            params['sources'] = source['id']
+            response = Raab_Requests.make_request("top_headlines", params)
+            self.stories[source['name']] = response
     
     def showNews(self):
         sources = self.pref_manager.get_sources()

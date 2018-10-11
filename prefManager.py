@@ -1,13 +1,10 @@
-import sys  #I don't like having an exit here as well as in main. Find a way around the circular imports issue.
-import requests
+import sys
 import json
 from menu import Menu
 from prefs import Preferences
+from raab_requests import Raab_Requests
 
 class PrefManager:
-    base_url = "https://newsapi.org/v2/"
-    top_sources = base_url + "sources"
-    prefs = None
     
     def __init__(self):
         try:
@@ -25,6 +22,7 @@ class PrefManager:
                     "paste it into prefs.json, replacing the example api key " +
                     "with your own.")
     
+    #Don't like having an exit here, find a way to move it into main so entry and exit same place.
     def exit_handler(message):
         print(message)
         sys.exit()
@@ -42,7 +40,9 @@ class PrefManager:
         return self.prefs.get_stories_per_source()
     
     def addSource(self, source_name):
-        source_list = self.get_top_sources()
+        params = {'apiKey': self.prefs.get_api_key()}
+        source_list = Raab_Requests.make_request("top_sources", params)
+        if source_list is None: return
         match = self.find_source(source_list['sources'], source_name)
         if match != -1 and match != -2:
             confirm_statement = "Add " + match['name'] + " to followed sources?"
@@ -52,11 +52,6 @@ class PrefManager:
                     print("Now following " + match['name'] + ".")
             else:
                 print("Cancelled. Preferences not changed.")
-            
-        #pull down sources
-        #filter sources for name
-        #if found, add to prefs
-        #else offer to take to page to get source and add it manually.
         
     def remove_source(self, source_name):
         match = self.find_source(self.prefs.get_sources(), source_name)
@@ -95,21 +90,10 @@ class PrefManager:
         elif match == -2:
             print("No matching source found for \"" + source_name + "\"")
         return match
-                  
-        
+            
     def get_top_sources(self):
-        params = {
-            'apiKey': self.prefs.get_api_key()
-        }
-        try:
-            print("Searching for sources...")
-            response = requests.get(self.top_sources, params)
-            response = response.json()
-            return response
-        except requests.exceptions.RequestException as e:
-            print(e)
-        except ValueError as e: #Could not parse response as JSON
-            print(e)
+        params = {'apiKey': self.prefs.get_api_key()}
+        return RaabRequests.make_request("top_sources", params)
     
     def format_source(self, source):
         formattedSource = source['name'] + ": "
