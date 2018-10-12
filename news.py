@@ -79,14 +79,20 @@ class News:
     #Retrieves and displays a random story from a random news agency to the user.  
     def random_story(self):
         print("Fetching random news story...")
+        
         #Grab random source
         params = {'apiKey': self.pref_manager.get_api_key()}
-        top_sources = Raab_Requests.make_request("top_sources", params)['sources']
+        top_sources = Raab_Requests.make_request("top_sources", params)
+        if top_sources is None:
+            return
+        top_sources = top_sources['sources']
         random_number = random.randint(0, len(top_sources))
         random_source = top_sources[random_number]
         
         #grab random story from source and display
         params['sources'] = random_source['id']
         random_stories = Raab_Requests.make_request("top_headlines", params)
+        if random_stories is None:
+            return
         self.stories['random'] = random_stories
         print(self.source_summary("random", 1))
