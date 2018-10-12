@@ -24,7 +24,11 @@ def commandHandler():
 				try:
 					story_number = int(commandArray[len(commandArray) - 1]) - 1
 					sourceName = " ".join(commandArray[1:len(commandArray)-1])
-					webbrowser.open(news.getStoryURL(sourceName, story_number))
+					url = news.getStoryURL(sourceName, story_number)
+					if(not url is None):
+						webbrowser.open(url)
+					else:
+						print("Could not find a URL for that story.")
 				except ValueError:
 					print("Error: invalid article number.")
 			else:
@@ -51,14 +55,21 @@ def commandHandler():
 			else:
 				print("Invalid command. Please use the format sps storyNumber")
 		elif(commandArray[0] == "random"):
-			print("random headline branch called")
-			#TODO!
+			news.random_story()
 		elif(commandArray[0] == "refresh"):
-			print("Refreshing headlines...")
-			news.refresh(commandArray)
 			#Can repost stories without calling API again by passing -local switch.
+			news.refresh(commandArray)
 		elif(commandArray[0] == "help"):
 			print("help branch called")
+			'''
+			preview
+			open
+			add
+			remove
+			sps
+			random
+			refresh
+			'''
 		elif(commandArray[0] == "exit"):
 			sys.exit()
 		else:

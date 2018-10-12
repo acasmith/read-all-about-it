@@ -1,4 +1,5 @@
 from raab_requests import Raab_Requests
+import random
 class News:
     
     def __init__(self, pref_manager):
@@ -9,7 +10,7 @@ class News:
                 
     def getStories(self):
         sources = self.pref_manager.get_sources()
-        params = {'apiKey': self.pref_manager.get_api_key()}
+        params = {'apiKey': self.pref_manager.get_api_key()}    #Refactor API key into raab_requests? Adds additional dependency though.
         for source in sources:
             params['sources'] = source['id']
             response = Raab_Requests.make_request("top_headlines", params)
@@ -19,13 +20,13 @@ class News:
         sources = self.pref_manager.get_sources()
         for source in sources:
             if(self.stories[source['name']]["status"] == "ok"):
-                print(self.sourceSummary(source['name'], self.pref_manager.get_stories_per_source()))
+                print(self.source_summary(source['name'], self.pref_manager.get_stories_per_source()))
             else:
                 print(self.formatRequestError(source))
             
 
-    def sourceSummary(self, source_name, stories_per_source):
-        summaryString = source_name + " Headlines: \n"
+    def source_summary(self, source_name, stories_per_source):
+        summaryString = self.stories[source_name]['articles'][0]['source']['name'] + " Headlines: \n"
         for x in range(0, stories_per_source):
                 summaryString += self.formatArticle(self.stories[source_name]["articles"][x], x + 1) + "\n"
         return summaryString
@@ -60,11 +61,32 @@ class News:
         print(storyPreview)
         
     def getStoryURL(self, source, story_number):
-        return self.stories[source]['articles'][story_number]['url']
+        url = None
+        for source_name in self.stories.keys():
+            if(source == source_name):
+                url = self.stories[source]['articles'][story_number]['url']
+        if (url is None) and (source == self.stories['random']['articles'][0]['source']['name']):
+            url = self.stories['random']['articles'][0]['url']   
+        return url
     
     def refresh(self, commandArray):
+        print("Refreshing headlines...")
         if(len(commandArray) == 1 or
            commandArray[1] != '-local'):
             self.getStories()
         self.showNews()
-    #random story
+    
+    #Retrieves and displays a random story from a random news agency to the user.  
+    def random_story(self):
+        print("Fetching random news story...")
+        #Grab random source
+        params = {'apiKey': self.pref_manager.get_api_key()}
+        top_sources = Raab_Requests.make_request("top_sources", params)['sources']
+        random_number = random.randint(0, len(top_sources))
+        random_source = top_sources[random_number]
+        
+        #grab random story from source and display
+        params['sources'] = random_source['id']
+        random_stories = Raab_Requests.make_request("top_headlines", params)
+        self.stories['random'] = random_stories
+        print(self.source_summary("random", 1))

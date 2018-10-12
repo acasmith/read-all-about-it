@@ -1,8 +1,6 @@
 import requests
 class Raab_Requests:
     base_url = "https://newsapi.org/v2/"
-    top_headlines = base_url + "top-headlines"
-    top_sources = base_url + "sources"
     urls = {
         "top_headlines": base_url + "top-headlines",
         "top_sources": base_url + "sources"
