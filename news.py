@@ -1,6 +1,40 @@
 from raab_requests import Raab_Requests
 import random
-class News:
+
+#Class only used by News_Manager, so placed in same file.
+class News_Article:
+    
+    def __init__(self, article):
+        self.article = article
+    
+    #Returns dict with id and name properties    
+    def get_source(self):
+        return self.article['source']
+    
+    def get_authour(self):
+        return self.article['author']
+
+    def get_title(self):
+        return self.article['title']
+    
+    def get_description(self):
+        return self.article['description']
+    
+    def get_url(self):
+        return self.article['url']
+    
+    #Not used in this program, here for completeness
+    def get_urlToImage(self):
+        return self.article['urlToImage']
+    
+    def get_publishedAt(self):
+        return self.article['publishedAt']
+    
+    def get_content(self):
+        return self.article['content']  
+    
+
+class News_Manager:
     
     def __init__(self, pref_manager):
         self.stories = {}
@@ -14,21 +48,25 @@ class News:
         for source in sources:
             params['sources'] = source['id']
             response = Raab_Requests.make_request("top_headlines", params)
-            self.stories[source['name']] = response
+            self.stories[source['name']] = []
+            for article in response['articles']:
+                self.stories[source['name']].append(News_Article(article))
     
     def showNews(self):
         sources = self.pref_manager.get_sources()
         for source in sources:
-            if(self.stories[source['name']]["status"] == "ok"):
+            if (source['name'] in self.stories.keys() and
+                len(self.stories[source['name']]) > 0):
                 print(self.source_summary(source['name'], self.pref_manager.get_stories_per_source()))
             else:
                 print(self.formatRequestError(source))
             
 
     def source_summary(self, source_name, stories_per_source):
-        summaryString = self.stories[source_name]['articles'][0]['source']['name'] + " Headlines: \n"
+        #Programatically get name from article object, because source_name passed in may be "random".
+        summaryString = self.stories[source_name][0].get_source()['name'] + " Headlines: \n"
         for x in range(0, stories_per_source):
-                summaryString += self.formatArticle(self.stories[source_name]["articles"][x], x + 1) + "\n"
+                summaryString += self.formatArticle(self.stories[source_name][x], x + 1) + "\n"
         return summaryString
     
     def formatRequestError(self, source_name):
@@ -41,17 +79,17 @@ class News:
     
     def formatArticle(self, article, articleNumber):
         formattedString = str(articleNumber) + ") "
-        formattedString += article['title']
+        formattedString += article.get_title()
         return formattedString
     
     def previewStory(self, source_name, story_number):
         storyPreview = ""
         if source_name in self.stories.keys():
             if(story_number >= 0 and story_number < len(self.stories[source_name])):
-                article = self.stories[source_name]['articles'][story_number]
-                storyPreview = article['title'] + "\n"
-                storyPreview += article['description'] + "\n"
-                storyPreview += article['content']
+                article = self.stories[source_name][story_number]
+                storyPreview = article.get_title() + "\n"
+                storyPreview += article.get_description() + "\n"
+                storyPreview += article.get_content()
             else:
                 storyPreview = "Source has no corresponding story for that article number."
         else:
@@ -64,9 +102,9 @@ class News:
         url = None
         for source_name in self.stories.keys():
             if(source == source_name):
-                url = self.stories[source]['articles'][story_number]['url']
-        if (url is None) and (source == self.stories['random']['articles'][0]['source']['name']):
-            url = self.stories['random']['articles'][0]['url']   
+                url = self.stories[source][story_number].get_url()
+        if (url is None) and (source == self.stories['random'][0].get_source()['name']):
+            url = self.stories['random'][0].get_url()  
         return url
     
     def refresh(self, commandArray):
@@ -94,5 +132,7 @@ class News:
         random_stories = Raab_Requests.make_request("top_headlines", params)
         if random_stories is None:
             return
-        self.stories['random'] = random_stories
+        self.stories['random'] = []
+        for article in random_stories['articles']:
+            self.stories['random'].append(News_Article(article))
         print(self.source_summary("random", 1))
