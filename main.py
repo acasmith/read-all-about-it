@@ -62,7 +62,7 @@ def commandHandler():
 			news.refresh(commandArray)
 		elif(commandArray[0] == "help"):
 			Help_Command.help_handler(commandArray)
-			#Refactor code from command handler to specific command handlers.
+			#Refactor code from command handler to specific command handlers? Unsure, fairly clean as is in command_handler().
 			#Refactor API key into raab_requests
 			#Generate preferences file if one is not found. Stops you propogating news sources via preferences to others.
 			#Write batch file to fire on startup, close after x time.
