@@ -26,7 +26,7 @@ Next, check if you have pip installed. Enter:
 ```
 pip --version
 ```
-If you haven't got it, grab it <a href="https://pip.pypa.io/en/stable/installing/">here</a>
+If you haven't got it, grab it <a href="https://pip.pypa.io/en/stable/installing/">here</a>.
 Now check if you've got pipenv (a python package manager) installed by entering:
 ```
 pipenv --version
