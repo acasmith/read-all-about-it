@@ -3,18 +3,18 @@ Simple, configurable command line news aggregator. Allows users to favourite
 news outlets, whose current headlines are displayed when the app is run.
 
 ### Commands
-Please use ```help``` for a full list of commands, and help <some command> to 
-get a detailed description.
-preview: Displays a short preview of a particular story.
-open: Opens a particular story in the systems default web browser.
-add: adds a news source to the users preferences so news from this agency is displayed on startup.
-remove: removes a news source from the users preferences.
-sps: Standing for 'stories per source', allows the user to specify the number of headlines to
-display per news source.
-random: Fetches a random headline from a random news source.
-refresh: displays current headlines
+Please use ```help``` for a full list of commands, and ```help <some command>``` to 
+get a detailed description.  
+```preview```: Displays a short preview of a particular story.  
+```open```: Opens a particular story in the systems default web browser.  
+```add```: adds a news source to the users preferences so news from this agency is displayed on startup.  
+```remove```: removes a news source from the users preferences.  
+```sps```: Standing for 'stories per source', allows the user to specify the number of headlines to
+display per news source.  
+```random```: Fetches a random headline from a random news source.  
+```refresh```: displays current headlines    
 
-To try out the software, or setup the project to work on the code, follow the steps below.
+To try out the software, or setup the project to work on the code, follow the steps below.  
 
 ## Setup
 First, check you have python 3.7 installed by opening a terminal and entering:
