@@ -36,9 +36,9 @@ If not, grab it by entering:
 pip install --user pipenv
 ```
 
-##Installation
-Get an API key from https://newsapi.org.
-Download the source from this repository.
+## Installation
+Get an API key from https://newsapi.org.  
+Download the source from this repository.  
 In a terminal, navigate to the directory containing the source and enter:
 ```
 pipenv install
