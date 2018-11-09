@@ -72,7 +72,7 @@ class News_Manager:
         for source_name in self.stories.keys():
             if(source == source_name):
                 url = self.stories[source][story_number].get_url()
-        if (url is None) and (source == self.stories['random'][0].get_source()['name']):
+        if (url is None) and ('random' in self.stories.keys()) and (source == self.stories['random'][0].get_source()['name']):
             url = self.stories['random'][0].get_url()  
         return url
     
