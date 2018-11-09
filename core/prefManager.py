@@ -1,8 +1,8 @@
 import sys
 import json
-from menu import Menu
-from prefs import Preferences
-from raab_requests import Raab_Requests
+from utils.menu import Menu
+from core.prefs import Preferences
+from utils.raab_requests import Raab_Requests
 
 class PrefManager:
     
